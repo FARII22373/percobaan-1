@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard SIP Kawasan Perkotaan Salaman</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #102a4c;
+    background: linear-gradient(155deg, #f6fafe, #e9f2fc 48%, #dce9f8);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Motif latar belakang */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: .085;
+    background-repeat: repeat;
+    background-size: 300px 150px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='150' viewBox='0 0 300 150'%3E%3Cg fill='none' stroke='%23336699' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 108 C 12 74, 52 62, 75 84 C 92 44, 150 38, 174 74 C 202 52, 248 64, 260 98 C 282 98, 294 120, 276 132 L 28 132 C 12 132, 6 120, 12 108 Z'/%3E%3Cpath d='M30 118 C 30 92, 58 82, 78 100 C 95 66, 144 58, 168 88 C 194 70, 232 80, 244 108 C 260 108, 270 120, 256 124 L 40 124 C 30 124, 26 120, 30 118 Z'/%3E%3Cpath d='M48 116 C 52 100, 72 95, 86 108 C 100 84, 136 78, 158 100 C 180 86, 214 94, 225 114'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.container {
+    position: relative;
+    max-width: 1080px;
+    margin: auto;
+    padding: 0 24px;
+}
+
+/* HEADER */
+header, .brand, .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+header {
+    justify-content: space-between;
+    padding: 24px 0;
+    border-bottom: 1px solid #d5e2ee;
+}
+
+.brand, .header-actions {
+    flex-wrap: wrap;
+}
+
+.brand-pill {
+    background: #102a4c;
+    color: white;
+    border-radius: 30px;
+    padding: 10px 16px;
+    font-size: .78rem;
+    font-weight: 800;
+}
+
+.brand-name {
+    font-size: .9rem;
+    font-weight: 700;
+}
+
+.nav-pill, .account, .logout {
+    text-decoration: none;
+    border-radius: 30px;
+    padding: 10px 15px;
+    background: rgba(255,255,255,.85);
+    border: 1px solid #d0dfed;
+    color: #1e456a;
+    font-size: .8rem;
+    font-weight: 700;
+}
+
+.nav-pill:hover, .logout:hover {
+    background: #102a4c;
+    color: white;
+}
+
+/* HERO */
+.hero {
+    text-align: center;
+    padding: 55px 12px 38px;
+}
+
+.hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,.85);
+    border: 1px solid #cfe0f2;
+    color: #2b608d;
+    border-radius: 30px;
+    padding: 9px 17px;
+    font-size: .77rem;
+    font-weight: 700;
+    margin-bottom: 21px;
+}
+
+.hero h1 {
+    font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+    max-width: 850px;
+    margin: 0 auto 18px;
+    line-height: 1.3;
+}
+
+.hero p {
+    color: #4b698c;
+    max-width: 730px;
+    margin: 0 auto 29px;
+    line-height: 1.8;
+    font-size: .95rem;
+}
+
+.hero-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 23px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: .85rem;
+    font-weight: 700;
+    transition: .2s;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+}
+
+.btn-main {
+    background: linear-gradient(135deg, #102a4c, #1d467a);
+    color: white;
+    box-shadow: 0 8px 20px rgba(16,42,76,.18);
+}
+
+.btn-outline {
+    background: rgba(255,255,255,.85);
+    color: #102a4c;
+    border: 1px solid #cbddec;
+}
+
+.btn-spasial {
+    background: linear-gradient(135deg, #167a9b, #176a88);
+    color: white;
+    box-shadow: 0 8px 20px rgba(22,122,155,.16);
+}
+
+/* STATISTIK */
+.stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 13px;
+    margin: 10px auto 54px;
+}
+
+.stat-pill {
+    font-family: inherit;
+    color: inherit;
+    cursor: pointer;
+    background: rgba(255,255,255,.82);
+    border: 1px solid white;
+    border-radius: 24px;
+    padding: 22px 12px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(16,42,76,.05);
+    transition: .25s;
+}
+
+.stat-pill:hover, .stat-pill:focus-visible {
+    transform: translateY(-4px);
+    border-color: #8bb9df;
+    box-shadow: 0 12px 25px rgba(16,42,76,.12);
+    outline: none;
+}
+
+.stat-value {
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+
+.stat-desc {
+    font-size: .74rem;
+    color: #557491;
+    margin-top: 7px;
+    line-height: 1.5;
+}
+
+.stat-hint {
+    font-size: .68rem;
+    color: #2c76b2;
+    margin-top: 12px;
+    font-weight: 700;
+}
+
+/* LACI PETA */
+.drawer-section {
+    max-width: 920px;
+    margin: 0 auto 60px;
+}
+
+.drawer-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.drawer-header h2 {
+    font-size: 1.35rem;
+    margin-bottom: 8px;
+}
+
+.drawer-header p {
+    font-size: .85rem;
+    color: #54718e;
+}
+
+.capsule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.capsule-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    text-decoration: none;
+    background: linear-gradient(135deg, #0f294a, #173c6b);
+    border: 1px solid rgba(147,197,253,.25);
+    border-radius: 50px;
+    padding: 19px 23px;
+    color: white;
+    box-shadow: 0 8px 20px rgba(15,41,74,.13);
+    transition: .25s;
+}
+
+.capsule-item:hover {
+    transform: translateY(-3px);
+    background: linear-gradient(135deg, #13345e, #1e4d87);
+}
+
+.capsule-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.capsule-icon {
+    width: 47px;
+    height: 47px;
+    min-width: 47px;
+    border-radius: 50%;
+    background: rgba(219,234,254,.14);
+    display: grid;
+    place-items: center;
+    font-size: 1.25rem;
+    color: #bae6fd;
+}
+
+.capsule-text h3 {
+    font-size: .96rem;
+    margin-bottom: 5px;
+}
+
+.capsule-text p {
+    font-size: .77rem;
+    color: #cbdcf0;
+    line-height: 1.6;
+}
+
+.capsule-action {
+    white-space: nowrap;
+    background: #e0f2fe;
+    color: #102a4c;
+    padding: 10px 15px;
+    border-radius: 30px;
+    font-size: .75rem;
+    font-weight: 800;
+}
+
+/* POPUP STATISTIK */
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(9,27,49,.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-card {
+    width: 100%;
+    max-width: 440px;
+    background: #f8fbff;
+    border-radius: 22px;
+    padding: 28px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+}
+
+.modal-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 17px;
+}
+
+.modal-top h2 {
+    font-size: 1.15rem;
+}
+
+.close-modal {
+    border: none;
+    background: #e5eff8;
+    color: #234e75;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.modal-content {
+    color: #476783;
+    font-size: .85rem;
+    line-height: 1.8;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #dbe8f3;
+    padding: 11px 0;
+}
+
+.detail-row strong {
+    color: #173e60;
+    text-align: right;
+}
+
+.modal-link {
+    display: inline-block;
+    background: #102a4c;
+    color: white;
+    text-decoration: none;
+    padding: 12px 18px;
+    border-radius: 30px;
+    font-size: .8rem;
+    font-weight: 700;
+    margin-top: 20px;
+}
+
+footer {
+    text-align: center;
+    padding: 25px 0 35px;
+    border-top: 1px solid #d5e2ee;
+    color: #5d7892;
+    font-size: .77rem;
+    line-height: 1.8;
+}
+
+@media (max-width: 900px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .stats-bar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 620px) {
+    .capsule-item {
+        border-radius: 24px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .capsule-action {
+        align-self: flex-end;
+    }
+    .stat-value {
+        font-size: 1.15rem;
+    }
+    .hero-actions .btn {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body data-auth-required="true">
+<div class="container">
+
+<!-- HEADER -->
+<header>
+    <div class="brand">
+        <span class="brand-pill">KELOMPOK 4</span>
+        <span class="brand-name">SIP Kawasan Perkotaan Salaman</span>
+    </div>
+
+    <div class="header-actions">
+        <span class="account">👤 <span data-user-name>Pengguna</span></span>
+        <a href="peta.html" class="nav-pill">Peta Interaktif →</a>
+        <a href="login.html" class="logout" data-logout>Keluar Akun</a>
+    </div>
+</header>
+
+<!-- HALAMAN SAMBUTAN -->
+<section class="hero">
+    <div class="hero-badge">
+        Portal Geospasial Pertanahan &amp; Tata Ruang
+    </div>
+
+    <h1>
+        Selamat Datang di Portal WebGIS Pertanahan
+        Kawasan Perkotaan Salaman
+    </h1>
+
+    <p>
+        Sistem Informasi Pertanahan dan Tata Ruang Interaktif
+        (Kecamatan Salaman, Tempuran, &amp; Borobudur)
+        — Kelompok 4
+    </p>
+
+    <div class="hero-actions">
+        <a href="peta.html" class="btn btn-main">
+            Masuk ke Peta Interaktif
+        </a>
+
+        <a href="#laci-layanan" class="btn btn-outline">
+            Lihat Laci Peta Spasial
+        </a>
+
+        <a href="olah_spasial.html" class="btn btn-spasial">
+            Pengolahan Data Spasial →
+        </a>
+    </div>
+</section>
+
+<!-- KARTU STATISTIK -->
+<section class="stats-bar" aria-label="Ringkasan wilayah">
+
+    <button type="button" class="stat-pill" data-detail="wilayah">
+        <div class="stat-value">3 Kecamatan</div>
+        <div class="stat-desc">Salaman, Tempuran, Borobudur</div>
+        <div class="stat-hint">Lihat Detail →</div>
+    </button>
+
+    <button type="button" class="stat-pill" data-detail="persil">
+        <div class="stat-value">151.071</div>
+        <div class="stat-desc">Total Bidang Persil Terdata</div>
+        <div class="stat-hint">Lihat Detail →</div>
+    </button>
+
+    <button type="button" class="stat-pill" data-detail="luas">
+        <div class="stat-value">14.051 Ha</div>
+        <div class="stat-desc">Total Luas Bidang Tanah</div>
+        <div class="stat-hint">Lihat Detail →</div>
+    </button>
+
+    <button type="button" class="stat-pill" data-detail="layanan">
+        <div class="stat-value">4 Laci Peta</div>
+        <div class="stat-desc">Persil, ZNT, Blok, &amp; Tematik</div>
+        <div class="stat-hint">Lihat Detail →</div>
+    </button>
+
+</section>
+
+<!-- LACI DATA SPASIAL -->
+<section id="laci-layanan" class="drawer-section">
+
+    <div class="drawer-header">
+        <h2>Laci Data Spasial &amp; Peta Tematik</h2>
+        <p>Pilih salah satu layanan untuk menuju peta interaktif.</p>
+    </div>
+
+    <div class="capsule-list">
+
+        <a href="peta.html" class="capsule-item">
+            <div class="capsule-left">
+                <div class="capsule-icon">▦</div>
+                <div class="capsule-text">
+                    <h3>Laci Peta Bidang Persil Tanah</h3>
+                    <p>
+                        Eksplorasi batas bidang tanah dan informasi
+                        atribut persil di tiga kecamatan.
+                    </p>
+                </div>
+            </div>
+            <span class="capsule-action">Buka Peta →</span>
+        </a>
+
+        <a href="peta.html" class="capsule-item">
+            <div class="capsule-left">
+                <div class="capsule-icon">◈</div>
+                <div class="capsule-text">
+                    <h3>Laci Zona Nilai Tanah (ZNT)</h3>
+                    <p>
+                        Layanan informasi zona nilai tanah
+                        pada kawasan perkotaan Salaman.
+                    </p>
+                </div>
+            </div>
+            <span class="capsule-action">Buka Peta →</span>
+        </a>
+
+        <a href="peta.html" class="capsule-item">
+            <div class="capsule-left">
+                <div class="capsule-icon">⊞</div>
+                <div class="capsule-text">
+                    <h3>Laci Peta Blok &amp; Subblok Perkotaan</h3>
+                    <p>
+                        Informasi pembagian blok dan subblok
+                        untuk kebutuhan perencanaan wilayah.
+                    </p>
+                </div>
+            </div>
+            <span class="capsule-action">Buka Peta →</span>
+        </a>
+
+        <a href="peta.html" class="capsule-item">
+            <div class="capsule-left">
+                <div class="capsule-icon">▤</div>
+                <div class="capsule-text">
+                    <h3>Laci Kumpulan Peta Tematik</h3>
+                    <p>
+                        Informasi spasial pendukung, seperti
+                        penggunaan lahan dan jaringan jalan.
+                    </p>
+                </div>
+            </div>
+            <span class="capsule-action">Buka Peta →</span>
+        </a>
+
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <strong>Kelompok 4</strong> — Sistem Informasi Pertanahan (SIP)
+    <p>Kawasan Perkotaan Salaman, Tempuran, dan Borobudur</p>
+</footer>
+
+</div>
+
+<!-- POPUP DETAIL STATISTIK -->
+<div id="detailModal"
+     class="modal"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="modalTitle"
+     aria-hidden="true">
+
+    <div class="modal-card">
+        <div class="modal-top">
+            <h2 id="modalTitle">Informasi Wilayah</h2>
+            <button type="button"
+                    class="close-modal"
+                    id="closeModal"
+                    aria-label="Tutup informasi">×</button>
+        </div>
+
+        <div id="modalContent" class="modal-content"></div>
+    </div>
+</div>
+
+<script>
+const details = {
+    wilayah: {
+        title: "Cakupan Wilayah Kajian",
+        html: `
+            <p>Portal SIP Kelompok 4 mencakup tiga kecamatan
+            di Kabupaten Magelang.</p>
+
+            <div class="detail-row">
+                <span>Wilayah 1</span><strong>Salaman</strong>
+            </div>
+            <div class="detail-row">
+                <span>Wilayah 2</span><strong>Tempuran</strong>
+            </div>
+            <div class="detail-row">
+                <span>Wilayah 3</span><strong>Borobudur</strong>
+            </div>
+
+            <p style="margin-top:12px">
+                Cakupan administrasi tiga kecamatan tidak selalu
+                sama dengan batas kawasan perkotaan yang dikaji.
+            </p>
+
+            <a href="peta.html" class="modal-link">
+                Lihat Peta Wilayah →
+            </a>
+        `
+    },
+
+    persil: {
+        title: "Informasi Bidang Persil",
+        html: `
+            <p>Ringkasan jumlah bidang persil yang
+            dicantumkan dalam dashboard.</p>
+
+            <div class="detail-row">
+                <span>Jumlah persil</span>
+                <strong>151.071 bidang</strong>
+            </div>
+            <div class="detail-row">
+                <span>Cakupan data</span>
+                <strong>3 kecamatan</strong>
+            </div>
+
+            <p style="margin-top:12px">
+                Pada peta interaktif, kamu dapat memilih
+                layer persil dan mengeklik bidang tanah
+                untuk melihat atribut yang tersedia.
+            </p>
+
+            <a href="peta.html" class="modal-link">
+                Jelajahi Persil →
+            </a>
+        `
+    },
+
+    luas: {
+        title: "Informasi Luas Bidang Tanah",
+        html: `
+            <p>Ringkasan luas bidang tanah berdasarkan
+            angka yang digunakan pada dashboard kelompok.</p>
+
+            <div class="detail-row">
+                <span>Total luas</span><strong>14.051 Ha</strong>
+            </div>
+            <div class="detail-row">
+                <span>Satuan</span><strong>Hektare</strong>
+            </div>
+            <div class="detail-row">
+                <span>Setara</span><strong>140,51 km²</strong>
+            </div>
+
+            <p style="margin-top:12px">
+                Nilai ini perlu dicocokkan dengan hasil
+                perhitungan luas persil pada database spasial.
+            </p>
+
+            <a href="peta.html" class="modal-link">
+                Lihat Peta Pertanahan →
+            </a>
+        `
+    },
+
+    layanan: {
+        title: "Layanan Peta SIP",
+        html: `
+            <p>Dashboard menyediakan empat kategori
+            informasi spasial.</p>
+
+            <div class="detail-row">
+                <span>1</span><strong>Bidang Persil</strong>
+            </div>
+            <div class="detail-row">
+                <span>2</span><strong>Zona Nilai Tanah</strong>
+            </div>
+            <div class="detail-row">
+                <span>3</span><strong>Blok & Subblok</strong>
+            </div>
+            <div class="detail-row">
+                <span>4</span><strong>Peta Tematik</strong>
+            </div>
+
+            <p style="margin-top:12px">
+                Saat ini peta interaktif telah dikonfigurasi
+                dengan tiga layer persil. Layer lainnya
+                dapat ditambahkan setelah tersedia
+                di GeoServer.
+            </p>
+
+            <a href="#laci-layanan"
+               class="modal-link"
+               id="goToDrawers">
+                Lihat Laci Peta →
+            </a>
+        `
+    }
+};
+
+const modal = document.getElementById('detailModal');
+const modalTitle = document.getElementById('modalTitle');
+const modalContent = document.getElementById('modalContent');
+const closeButton = document.getElementById('closeModal');
+
+let previousFocus = null;
+
+function closeDetail() {
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
+
+    if (previousFocus) previousFocus.focus();
+}
+
+function openDetail(key) {
+    const detail = details[key];
+    if (!detail) return;
+
+    previousFocus = document.activeElement;
+    modalTitle.textContent = detail.title;
+    modalContent.innerHTML = detail.html;
+
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+    closeButton.focus();
+
+    const drawerLink = document.getElementById('goToDrawers');
+    if (drawerLink) drawerLink.addEventListener('click', closeDetail);
+}
+
+document.querySelectorAll('[data-detail]').forEach(button => {
+    button.addEventListener('click', () => {
+        openDetail(button.dataset.detail);
+    });
+});
+
+closeButton.addEventListener('click', closeDetail);
+
+modal.addEventListener('click', event => {
+    if (event.target === modal) closeDetail();
+});
+
+document.addEventListener('keydown', event => {
+    if (!modal.classList.contains('show')) return;
+
+    if (event.key === 'Escape') {
+        closeDetail();
+        return;
+    }
+
+    if (event.key === 'Tab') {
+        const focusable = Array.from(
+            modal.querySelectorAll('button, a[href], input, select, textarea')
+        ).filter(element => element.getClientRects().length > 0);
+
+        if (!focusable.length) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
+    }
+});
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="auth.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+KONFIGURASI SEBELUM PUBLIKASI
+1. Isi SUPABASE_URL dan SUPABASE_ANON_KEY pada config.js.
+2. Atur Site URL dan Redirect URLs pada Supabase.
+3. Pastikan URL Cloudflare Tunnel GeoServer masih aktif.
+4. Pastikan GeoServer mengizinkan CORS dari origin GitHub Pages untuk GetFeatureInfo.
+5. Upload seluruh isi folder ini ke root repository GitHub.
+6. Aktifkan GitHub Pages dari branch main / root.

@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peta Interaktif | SIP Kelompok 4</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <style>
+        :root {
+            --navy: #102a4c;
+            --blue: #245b8c;
+            --light-blue: #e8f3fc;
+            --border: #d4e3ef;
+            --muted: #66839d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #eaf3fb;
+            color: var(--navy);
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        button, select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 365px;
+            min-width: 365px;
+            height: 100%;
+            background: linear-gradient(160deg, #f8fbff, #e6f1fa);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            box-shadow: 4px 0 22px rgba(16,42,76,.09);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: .055;
+            background-repeat: repeat;
+            background-size: 300px 150px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='150' viewBox='0 0 300 150'%3E%3Cg fill='none' stroke='%23336699' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 108 C 12 74, 52 62, 75 84 C 92 44, 150 38, 174 74 C 202 52, 248 64, 260 98 C 282 98, 294 120, 276 132 L 28 132 C 12 132, 6 120, 12 108 Z'/%3E%3Cpath d='M30 118 C 30 92, 58 82, 78 100 C 95 66, 144 58, 168 88 C 194 70, 232 80, 244 108 C 260 108, 270 120, 256 124 L 40 124 C 30 124, 26 120, 30 118 Z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .sidebar-inner {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .sidebar-scroll {
+            padding: 21px;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+            scrollbar-width: thin;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .brand-logo {
+            width: 55px;
+            height: 55px;
+            flex-shrink: 0;
+            border-radius: 16px;
+            background: linear-gradient(135deg,#102a4c,#285d8b);
+            color: white;
+            display: grid;
+            place-items: center;
+            font-size: .83rem;
+            font-weight: 800;
+            box-shadow: 0 7px 17px rgba(16,42,76,.18);
+        }
+
+        .brand h1 {
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .brand p {
+            font-size: .72rem;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .account {
+            background: rgba(255,255,255,.8);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: #dbeaf7;
+            font-size: 1.1rem;
+        }
+
+        .account small {
+            display: block;
+            color: var(--muted);
+            font-size: .69rem;
+            margin-bottom: 4px;
+        }
+
+        .account strong {
+            font-size: .83rem;
+            overflow-wrap: anywhere;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: .85rem;
+            font-weight: 800;
+            margin-bottom: 7px;
+        }
+
+        .section-desc {
+            color: var(--muted);
+            font-size: .75rem;
+            line-height: 1.7;
+        }
+
+        .mini-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 13px;
+        }
+
+        .mini-stat {
+            background: rgba(255,255,255,.85);
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            padding: 13px;
+        }
+
+        .mini-stat strong {
+            display: block;
+            font-size: 1.4rem;
+            color: #1b527d;
+            margin-bottom: 3px;
+        }
+
+        .mini-stat span {
+            font-size: .69rem;
+            color: var(--muted);
+        }
+
+        .panel {
+            background: rgba(255,255,255,.82);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 17px;
+            box-shadow: 0 4px 15px rgba(16,42,76,.035);
+        }
+
+        .panel-heading {
+            font-size: .81rem;
+            font-weight: 800;
+            margin-bottom: 11px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .select-input {
+            width: 100%;
+            border: 1px solid #cbddeb;
+            border-radius: 10px;
+            padding: 11px;
+            background: #f7fbff;
+            color: #234c70;
+            font-size: .78rem;
+            outline: none;
+        }
+
+        .helper {
+            margin-top: 9px;
+            font-size: .7rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .layer-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .layer-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 11px;
+            border: 1px solid #e1ebf3;
+            background: #f8fbff;
+            border-radius: 10px;
+            font-size: .77rem;
+            font-weight: 600;
+        }
+
+        .layer-row label {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            cursor: pointer;
+        }
+
+        .layer-row input {
+            accent-color: #245b8c;
+            width: 16px;
+            height: 16px;
+        }
+
+        .layer-status {
+            color: #347ba9;
+            font-size: .66rem;
+            white-space: nowrap;
+        }
+
+        .panel-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #e8f2fa;
+            border-radius: 10px;
+            padding: 4px;
+            gap: 4px;
+            margin-bottom: 13px;
+        }
+
+        .tab-btn {
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: #597994;
+            padding: 10px 5px;
+            font-size: .72rem;
+            font-weight: 700;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #194e79;
+            box-shadow: 0 2px 8px rgba(16,42,76,.07);
+        }
+
+        .tab-content {
+            display: none;
+            font-size: .76rem;
+            color: #4b6c86;
+            line-height: 1.75;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .guide-list {
+            padding-left: 18px;
+        }
+
+        .guide-list li {
+            margin-bottom: 7px;
+        }
+
+        .attribute-row {
+            border-bottom: 1px solid #e4edf5;
+            padding: 9px 0;
+        }
+
+        .attribute-row span {
+            display: block;
+            color: #7891a7;
+            font-size: .68rem;
+            margin-bottom: 3px;
+            overflow-wrap: anywhere;
+        }
+
+        .attribute-row strong {
+            display: block;
+            color: #234c70;
+            font-size: .76rem;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        .status-message {
+            border-radius: 10px;
+            padding: 10px 12px;
+            background: #eaf4fc;
+            color: #35668b;
+            font-size: .72rem;
+            line-height: 1.6;
+        }
+
+        .sidebar-footer {
+            padding: 13px 20px 17px;
+            border-top: 1px solid var(--border);
+            background: rgba(244,249,253,.96);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+        }
+
+        .footer-btn {
+            display: grid;
+            place-items: center;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 11px;
+            padding: 12px 7px;
+            font-size: .72rem;
+            font-weight: 800;
+            transition: .2s;
+        }
+
+        .footer-btn.primary {
+            background: var(--navy);
+            color: white;
+        }
+
+        .footer-btn.secondary {
+            background: white;
+            border: 1px solid var(--border);
+            color: #285b82;
+        }
+
+        .footer-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* MAP */
+
+        .map-area {
+            flex: 1;
+            min-width: 0;
+            height: 100%;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            background: #dbe9f4;
+        }
+
+        .map-heading {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 800;
+            max-width: calc(100% - 155px);
+            background: rgba(255,255,255,.94);
+            backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            border-radius: 13px;
+            border: 1px solid #d5e4ef;
+            box-shadow: 0 4px 18px rgba(16,42,76,.13);
+            pointer-events: none;
+        }
+
+        .map-heading strong {
+            display: block;
+            font-size: .81rem;
+            margin-bottom: 4px;
+        }
+
+        .map-heading span {
+            font-size: .69rem;
+            color: var(--muted);
+        }
+
+        .map-tools {
+            position: absolute;
+            bottom: 28px;
+            right: 15px;
+            z-index: 800;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .tool-btn {
+            width: 42px;
+            height: 42px;
+            border: 1px solid #d3e3ef;
+            border-radius: 12px;
+            background: rgba(255,255,255,.96);
+            color: #214e75;
+            font-size: 1.15rem;
+            font-weight: 800;
+            box-shadow: 0 4px 14px rgba(16,42,76,.16);
+        }
+
+        .tool-btn:hover {
+            background: #e9f4fc;
+        }
+
+        .map-notice {
+            position: absolute;
+            bottom: 25px;
+            left: 15px;
+            z-index: 800;
+            background: rgba(255,255,255,.94);
+            border: 1px solid #d5e4ef;
+            border-radius: 11px;
+            padding: 10px 13px;
+            font-size: .7rem;
+            color: #446782;
+            max-width: 270px;
+            box-shadow: 0 4px 14px rgba(16,42,76,.12);
+            pointer-events: none;
+        }
+
+        /* POPUP */
+
+        .leaflet-popup-content-wrapper {
+            background: #fff;
+            border: 1px solid #cbdfea;
+            border-radius: 14px;
+            box-shadow: 0 8px 25px rgba(16,42,76,.2);
+        }
+
+        .leaflet-popup-content {
+            min-width: 210px;
+            max-width: 300px;
+        }
+
+        .leaflet-popup-tip {
+            background: white;
+        }
+
+        .popup-title {
+            font-size: .88rem;
+            color: #1b527d;
+            font-weight: 800;
+            margin-bottom: 10px;
+            padding-bottom: 9px;
+            border-bottom: 1px solid #dce8f2;
+        }
+
+        .popup-table {
+            width: 100%;
+            border-collapse: collapse;
+            display: block;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+
+        .popup-table td {
+            font-family: 'Plus Jakarta Sans',sans-serif;
+            font-size: .69rem;
+            padding: 7px 5px;
+            border-bottom: 1px solid #e6edf4;
+            vertical-align: top;
+            overflow-wrap: anywhere;
+        }
+
+        .popup-table td:first-child {
+            color: #427295;
+            font-weight: 800;
+            width: 42%;
+        }
+
+        .popup-table td:last-child {
+            color: #294e6d;
+        }
+
+        .leaflet-control-layers {
+            border-radius: 11px !important;
+            border: 1px solid #cbdfea !important;
+            font-family: 'Plus Jakarta Sans',sans-serif;
+            font-size: .73rem;
+        }
+
+        @media (max-width: 800px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                min-width: 0;
+                height: 43%;
+                flex-shrink: 0;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .sidebar-scroll {
+                padding: 14px;
+            }
+
+            .sidebar-footer {
+                padding: 9px 14px;
+            }
+
+            .map-area {
+                height: 57%;
+                flex: 1;
+            }
+
+            .map-heading {
+                top: 10px;
+                left: 10px;
+                padding: 9px 11px;
+            }
+
+            .map-heading strong {
+                font-size: .7rem;
+            }
+
+            .map-heading span {
+                font-size: .62rem;
+            }
+
+            .map-notice {
+                display: none;
+            }
+
+            .map-tools {
+                bottom: 15px;
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body data-auth-required="true">
+
+<!-- ==================================================
+     SIDEBAR
+================================================== -->
+
+<aside class="sidebar">
+    <div class="sidebar-inner">
+
+        <div class="sidebar-scroll">
+
+            <div class="brand">
+                <div class="brand-logo">SIP 04</div>
+                <div>
+                    <h1>SIP KELOMPOK 4</h1>
+                    <p>WebGIS Pertanahan<br>Kawasan Perkotaan Salaman</p>
+                </div>
+            </div>
+
+            <div class="account">
+                <div class="avatar">👤</div>
+                <div>
+                    <small>Akun yang sedang masuk</small>
+                    <strong><span data-user-name>Pengguna</span></strong>
+                </div>
+            </div>
+
+            <!-- RINGKASAN -->
+            <section class="section">
+                <h2 class="section-title">Dashboard Peta</h2>
+                <p class="section-desc">
+                    Eksplorasi data bidang persil tanah
+                    di Kecamatan Borobudur, Salaman,
+                    dan Tempuran, Kabupaten Magelang.
+                </p>
+
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <strong>3</strong>
+                        <span>Layer persil tersedia</span>
+                    </div>
+
+                    <div class="mini-stat">
+                        <strong id="activeCount">3</strong>
+                        <span>Layer sedang aktif</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FILTER KECAMATAN -->
+            <section class="panel">
+                <h3 class="panel-heading">
+                    Pilih Kecamatan
+                </h3>
+
+                <select id="kecamatanFilter"
+                        class="select-input"
+                        aria-label="Filter layer kecamatan">
+
+                    <option value="semua">
+                        Semua Kecamatan
+                    </option>
+
+                    <option value="borobudur">
+                        Borobudur
+                    </option>
+
+                    <option value="salaman">
+                        Salaman
+                    </option>
+
+                    <option value="tempuran">
+                        Tempuran
+                    </option>
+                </select>
+
+                <p class="helper">
+                    Filter ini menampilkan layer persil
+                    kecamatan yang dipilih.
+                    Posisi peta tidak berubah.
+                </p>
+            </section>
+
+            <!-- LAYER -->
+            <section class="panel">
+                <h3 class="panel-heading">
+                    Layer Bidang Persil
+                    <span id="layerSummary"
+                          class="layer-status">
+                        3 aktif
+                    </span>
+                </h3>
+
+                <div class="layer-list">
+
+                    <div class="layer-row">
+                        <label for="checkBorobudur">
+                            <input type="checkbox"
+                                   id="checkBorobudur"
+                                   checked>
+                            Borobudur
+                        </label>
+                        <span class="layer-status">WMS</span>
+                    </div>
+
+                    <div class="layer-row">
+                        <label for="checkSalaman">
+                            <input type="checkbox"
+                                   id="checkSalaman"
+                                   checked>
+                            Salaman
+                        </label>
+                        <span class="layer-status">WMS</span>
+                    </div>
+
+                    <div class="layer-row">
+                        <label for="checkTempuran">
+                            <input type="checkbox"
+                                   id="checkTempuran"
+                                   checked>
+                            Tempuran
+                        </label>
+                        <span class="layer-status">WMS</span>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- BASEMAP -->
+            <section class="panel">
+                <h3 class="panel-heading">
+                    Tampilan Peta Dasar
+                </h3>
+
+                <select id="basemapSelect"
+                        class="select-input"
+                        aria-label="Pilih peta dasar">
+
+                    <option value="esri">
+                        Esri World Imagery
+                    </option>
+
+                    <option value="google">
+                        Google Satellite Hybrid
+                    </option>
+
+                    <option value="osm">
+                        OpenStreetMap
+                    </option>
+                </select>
+            </section>
+
+            <!-- INFORMASI / PETUNJUK -->
+            <section class="panel">
+
+                <h3 class="panel-heading">
+                    Pusat Informasi Peta
+                </h3>
+
+                <div class="panel-tabs">
+
+                    <button type="button"
+                            id="tabGuide"
+                            class="tab-btn active">
+                        Petunjuk
+                    </button>
+
+                    <button type="button"
+                            id="tabAttribute"
+                            class="tab-btn">
+                        Atribut Bidang
+                    </button>
+
+                </div>
+
+                <div id="guideContent"
+                     class="tab-content active">
+
+                    <ol class="guide-list">
+                        <li>Pilih kecamatan atau aktifkan layer persil.</li>
+                        <li>Perbesar peta untuk melihat bidang tanah.</li>
+                        <li>Klik bidang persil untuk mengambil atribut dari GeoServer.</li>
+                        <li>Informasi akan tampil di popup dan panel atribut.</li>
+                    </ol>
+
+                </div>
+
+                <div id="attributeContent"
+                     class="tab-content">
+
+                    <div id="attributeInfo"
+                         class="status-message">
+                        Belum ada bidang tanah yang dipilih.
+                        Klik salah satu persil pada peta.
+                    </div>
+
+                </div>
+
+            </section>
+
+            <p class="section-desc">
+                Sumber layer: GeoServer Kelompok 4.
+                Informasi mengikuti data spasial
+                yang tersedia pada layanan WMS.
+            </p>
+
+        </div>
+
+        <!-- NAVIGASI -->
+        <div class="sidebar-footer">
+
+            <a href="index.html"
+               class="footer-btn primary">
+                ← Dashboard
+            </a>
+
+            <a href="login.html"
+               class="footer-btn secondary" data-logout>
+                Keluar Akun
+            </a>
+
+        </div>
+
+    </div>
+</aside>
+
+<!-- ==================================================
+     PETA
+================================================== -->
+
+<main class="map-area">
+
+    <div id="map"></div>
+
+    <div class="map-heading">
+        <strong>Peta Bidang Persil Tanah</strong>
+        <span>Borobudur • Salaman • Tempuran</span>
+    </div>
+
+    <div class="map-tools">
+        <button type="button"
+                id="resetView"
+                class="tool-btn"
+                title="Kembali ke tampilan awal"
+                aria-label="Kembali ke tampilan awal">
+            ⌂
+        </button>
+
+        <button type="button"
+                id="zoomInCustom"
+                class="tool-btn"
+                title="Perbesar peta"
+                aria-label="Perbesar peta">
+            +
+        </button>
+
+        <button type="button"
+                id="zoomOutCustom"
+                class="tool-btn"
+                title="Perkecil peta"
+                aria-label="Perkecil peta">
+            −
+        </button>
+    </div>
+
+    <div class="map-notice">
+        Klik bidang tanah untuk melihat atribut persil.
+    </div>
+
+</main>
+
+<!-- LEAFLET JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+// ======================================================
+// 1. KONFIGURASI DASAR
+// ======================================================
+
+const initialCenter = [-7.55, 110.16];
+const initialZoom = 12;
+
+// Mempertahankan reverse proxy Apache yang digunakan
+// pada proyek SIP sebelumnya.
+const geoserverUrl = window.APP_CONFIG.GEOSERVER_WMS_URL;
+
+// ======================================================
+// 2. INISIALISASI LEAFLET
+// ======================================================
+
+const map = L.map('map', {
+    zoomControl: false
+}).setView(initialCenter, initialZoom);
+
+L.control.scale({
+    imperial: false,
+    metric: true
+}).addTo(map);
+
+// ======================================================
+// 3. BASEMAP
+// ======================================================
+
+const esriSat = L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    {
+        maxZoom: 19,
+        attribution: 'Tiles &copy; Esri'
+    }
+);
+
+const googleHybrid = L.tileLayer(
+    'https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+    {
+        maxZoom: 20,
+        subdomains: ['mt0','mt1','mt2','mt3'],
+        attribution: 'Google Maps'
+    }
+);
+
+const osm = L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+    }
+);
+
+const baseLayers = {
+    esri: esriSat,
+    google: googleHybrid,
+    osm: osm
+};
+
+let currentBase = esriSat;
+currentBase.addTo(map);
+
+// ======================================================
+// 4. LAYER WMS GEOSERVER
+// ======================================================
+
+function createWMS(layerName) {
+    return L.tileLayer.wms(geoserverUrl, {
+        layers: layerName,
+        format: 'image/png',
+        transparent: true,
+        version: '1.1.0'
+    });
+}
+
+const wmsBorobudur = createWMS(
+    'tugas_sip:Data_Persil_Borobudur'
+);
+
+const wmsSalaman = createWMS(
+    'tugas_sip:Data_Persil_Salaman'
+);
+
+const wmsTempuran = createWMS(
+    'tugas_sip:Data_Persil_Tempuran'
+);
+
+const parcelLayers = {
+    borobudur: {
+        name: 'Borobudur',
+        wmsName: 'tugas_sip:Data_Persil_Borobudur',
+        layer: wmsBorobudur,
+        checkbox: document.getElementById('checkBorobudur')
+    },
+
+    salaman: {
+        name: 'Salaman',
+        wmsName: 'tugas_sip:Data_Persil_Salaman',
+        layer: wmsSalaman,
+        checkbox: document.getElementById('checkSalaman')
+    },
+
+    tempuran: {
+        name: 'Tempuran',
+        wmsName: 'tugas_sip:Data_Persil_Tempuran',
+        layer: wmsTempuran,
+        checkbox: document.getElementById('checkTempuran')
+    }
+};
+
+// Semua layer aktif pada awal pembukaan.
+Object.values(parcelLayers).forEach(function(item) {
+    item.layer.addTo(map);
+});
+
+// ======================================================
+// 5. MENGHITUNG LAYER AKTIF
+// ======================================================
+
+function getActiveLayers() {
+
+    return Object.values(parcelLayers).filter(
+        function(item) {
+            return map.hasLayer(item.layer);
+        }
+    );
+
+}
+
+function updateLayerCount() {
+
+    const count = getActiveLayers().length;
+
+    document.getElementById('activeCount')
+        .textContent = count;
+
+    document.getElementById('layerSummary')
+        .textContent = count + ' aktif';
+
+}
+
+function syncCheckboxes() {
+
+    Object.values(parcelLayers).forEach(function(item) {
+
+        item.checkbox.checked =
+            map.hasLayer(item.layer);
+
+    });
+
+    updateLayerCount();
+
+}
+
+// ======================================================
+// 6. KONTROL CHECKBOX LAYER
+// ======================================================
+
+Object.values(parcelLayers).forEach(function(item) {
+
+    item.checkbox.addEventListener('change', function() {
+
+        if (item.checkbox.checked) {
+
+            if (!map.hasLayer(item.layer)) {
+                item.layer.addTo(map);
+            }
+
+        } else {
+
+            if (map.hasLayer(item.layer)) {
+                map.removeLayer(item.layer);
+            }
+
+        }
+
+        // Pemilihan manual membatalkan filter tunggal.
+        document.getElementById('kecamatanFilter')
+            .value = 'semua';
+
+        updateLayerCount();
+
+    });
+
+});
+
+// ======================================================
+// 7. FILTER KECAMATAN
+// ======================================================
+
+document.getElementById('kecamatanFilter')
+    .addEventListener('change', function() {
+
+        const selected = this.value;
+
+        Object.keys(parcelLayers).forEach(function(key) {
+
+            const item = parcelLayers[key];
+
+            const shouldShow =
+                selected === 'semua' ||
+                selected === key;
+
+            if (shouldShow) {
+
+                if (!map.hasLayer(item.layer)) {
+                    item.layer.addTo(map);
+                }
+
+            } else {
+
+                if (map.hasLayer(item.layer)) {
+                    map.removeLayer(item.layer);
+                }
+
+            }
+
+        });
+
+        syncCheckboxes();
+
+    });
+
+// ======================================================
+// 8. PILIHAN BASEMAP
+// ======================================================
+
+document.getElementById('basemapSelect')
+    .addEventListener('change', function() {
+
+        const selected = this.value;
+
+        if (!baseLayers[selected]) {
+            return;
+        }
+
+        map.removeLayer(currentBase);
+
+        currentBase = baseLayers[selected];
+
+        currentBase.addTo(map);
+
+        // Pastikan layer persil tetap berada
+        // di atas basemap.
+        Object.values(parcelLayers).forEach(function(item) {
+
+            if (map.hasLayer(item.layer)) {
+                item.layer.bringToFront();
+            }
+
+        });
+
+    });
+
+// ======================================================
+// 9. TOMBOL PETA
+// ======================================================
+
+document.getElementById('resetView')
+    .addEventListener('click', function() {
+
+        map.setView(initialCenter, initialZoom);
+
+    });
+
+document.getElementById('zoomInCustom')
+    .addEventListener('click', function() {
+
+        map.zoomIn();
+
+    });
+
+document.getElementById('zoomOutCustom')
+    .addEventListener('click', function() {
+
+        map.zoomOut();
+
+    });
+
+// ======================================================
+// 10. TAB INFORMASI
+// ======================================================
+
+const tabGuide = document.getElementById('tabGuide');
+const tabAttribute = document.getElementById('tabAttribute');
+
+const guideContent =
+    document.getElementById('guideContent');
+
+const attributeContent =
+    document.getElementById('attributeContent');
+
+function showTab(tabName) {
+
+    const showAttribute = tabName === 'attribute';
+
+    tabGuide.classList.toggle(
+        'active',
+        !showAttribute
+    );
+
+    tabAttribute.classList.toggle(
+        'active',
+        showAttribute
+    );
+
+    guideContent.classList.toggle(
+        'active',
+        !showAttribute
+    );
+
+    attributeContent.classList.toggle(
+        'active',
+        showAttribute
+    );
+
+}
+
+tabGuide.addEventListener('click', function() {
+    showTab('guide');
+});
+
+tabAttribute.addEventListener('click', function() {
+    showTab('attribute');
+});
+
+// ======================================================
+// 11. KEAMANAN TAMPILAN ATRIBUT
+// ======================================================
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+}
+
+function formatValue(value) {
+
+    if (value === null || value === undefined) {
+        return '-';
+    }
+
+    if (typeof value === 'object') {
+        return JSON.stringify(value);
+    }
+
+    return String(value);
+
+}
+
+// ======================================================
+// 12. MENAMPILKAN ATRIBUT PADA SIDEBAR
+// ======================================================
+
+function showAttributeInfo(properties) {
+
+    const container =
+        document.getElementById('attributeInfo');
+
+    container.innerHTML = '';
+
+    const entries = Object.entries(properties)
+        .filter(function(entry) {
+
+            const key = entry[0];
+            const value = entry[1];
+
+            return (
+                key.toLowerCase() !== 'bbox' &&
+                value !== null &&
+                value !== undefined &&
+                value !== ''
+            );
+
+        });
+
+    if (entries.length === 0) {
+
+        container.textContent =
+            'Bidang ditemukan, tetapi tidak ada atribut yang dapat ditampilkan.';
+
+        showTab('attribute');
+        return;
+    }
+
+    // Menampilkan maksimal enam atribut di sidebar.
+    // Nama atribut mengikuti database GeoServer,
+    // sehingga tidak mengasumsikan nama kolom tertentu.
+    entries.slice(0, 6).forEach(function(entry) {
+
+        const row = document.createElement('div');
+        row.className = 'attribute-row';
+
+        const label = document.createElement('span');
+        label.textContent = entry[0];
+
+        const value = document.createElement('strong');
+        value.textContent = formatValue(entry[1]);
+
+        row.appendChild(label);
+        row.appendChild(value);
+
+        container.appendChild(row);
+
+    });
+
+    if (entries.length > 6) {
+
+        const note = document.createElement('p');
+
+        note.className = 'helper';
+        note.textContent =
+            'Atribut lainnya dapat dilihat pada popup peta.';
+
+        container.appendChild(note);
+
+    }
+
+    showTab('attribute');
+
+}
+
+// ======================================================
+// 13. MEMBUAT POPUP ATRIBUT
+// ======================================================
+
+function buildPopup(properties) {
+
+    let html =
+        '<div class="popup-title">' +
+        'Informasi Bidang Tanah' +
+        '</div>';
+
+    html += '<table class="popup-table">';
+
+    let count = 0;
+
+    Object.keys(properties).forEach(function(key) {
+
+        const value = properties[key];
+
+        if (
+            key.toLowerCase() === 'bbox' ||
+            value === null ||
+            value === undefined ||
+            value === ''
+        ) {
+            return;
+        }
+
+        html +=
+            '<tr>' +
+            '<td>' + escapeHTML(key) + '</td>' +
+            '<td>' + escapeHTML(formatValue(value)) + '</td>' +
+            '</tr>';
+
+        count++;
+
+    });
+
+    if (count === 0) {
+
+        html +=
+            '<tr><td colspan="2">' +
+            'Tidak ada atribut yang tersedia.' +
+            '</td></tr>';
+
+    }
+
+    html += '</table>';
+
+    return html;
+
+}
+
+// ======================================================
+// 14. GETFEATUREINFO GEOSERVER
+// ======================================================
+
+// Menyimpan nomor permintaan agar hasil klik lama
+// tidak menimpa hasil klik yang lebih baru.
+let requestNumber = 0;
+let activeRequest = null;
+
+map.on('click', async function(event) {
+
+    const activeLayers = getActiveLayers();
+
+    if (activeLayers.length === 0) {
+
+        alert(
+            'Aktifkan minimal satu layer persil terlebih dahulu.'
+        );
+
+        return;
+
+    }
+
+    requestNumber++;
+    const thisRequest = requestNumber;
+
+    if (activeRequest) {
+        activeRequest.abort();
+    }
+
+    activeRequest = new AbortController();
+
+    const latlng = event.latlng;
+
+    const point =
+        map.latLngToContainerPoint(latlng);
+
+    const size = map.getSize();
+
+    const layerNames = activeLayers.map(
+        function(item) {
+            return item.wmsName;
+        }
+    ).join(',');
+
+    // Peta Leaflet menggunakan EPSG:3857.
+    // BBOX GetFeatureInfo disesuaikan dengan
+    // sistem koordinat WMS yang ditampilkan.
+
+    const bounds = map.getBounds();
+
+    const sw = L.CRS.EPSG3857.project(
+        bounds.getSouthWest()
+    );
+
+    const ne = L.CRS.EPSG3857.project(
+        bounds.getNorthEast()
+    );
+
+    const bbox = [
+        sw.x,
+        sw.y,
+        ne.x,
+        ne.y
+    ].join(',');
+
+    const params = new URLSearchParams({
+        SERVICE: 'WMS',
+        VERSION: '1.1.0',
+        REQUEST: 'GetFeatureInfo',
+        LAYERS: layerNames,
+        QUERY_LAYERS: layerNames,
+        STYLES: '',
+        BBOX: bbox,
+        FEATURE_COUNT: '1',
+        HEIGHT: String(size.y),
+        WIDTH: String(size.x),
+        FORMAT: 'image/png',
+        INFO_FORMAT: 'application/json',
+        SRS: 'EPSG:3857',
+        X: String(Math.round(point.x)),
+        Y: String(Math.round(point.y))
+    });
+
+    const url = geoserverUrl + '?' + params.toString();
+
+    const popup = L.popup({
+        maxWidth: 330,
+        minWidth: 230
+    })
+        .setLatLng(latlng)
+        .setContent(
+            '<p style="padding:8px;color:#285b82;">' +
+            'Mengambil atribut bidang tanah...' +
+            '</p>'
+        )
+        .openOn(map);
+
+    const attributeInfo =
+        document.getElementById('attributeInfo');
+
+    attributeInfo.textContent =
+        'Sedang mengambil data dari GeoServer...';
+
+    showTab('attribute');
+
+    try {
+
+        const response = await fetch(url, {
+            signal: activeRequest.signal
+        });
+
+        if (!response.ok) {
+            throw new Error(
+                'HTTP ' + response.status
+            );
+        }
+
+        const data = await response.json();
+
+        // Abaikan hasil permintaan lama.
+        if (thisRequest !== requestNumber) {
+            return;
+        }
+
+        if (
+            data.features &&
+            data.features.length > 0
+        ) {
+
+            const properties =
+                data.features[0].properties || {};
+
+            popup.setContent(
+                buildPopup(properties)
+            );
+
+            showAttributeInfo(properties);
+
+        } else {
+
+            popup.setContent(
+                '<p style="padding:8px;color:#8b6c27;">' +
+                'Tidak ditemukan data persil pada titik ini.' +
+                '</p>'
+            );
+
+            attributeInfo.textContent =
+                'Tidak ditemukan persil pada titik yang dipilih. ' +
+                'Coba klik bagian tengah bidang tanah.';
+
+        }
+
+    } catch (error) {
+
+        if (error.name === 'AbortError') {
+            return;
+        }
+
+        console.error(
+            'GetFeatureInfo Error:',
+            error
+        );
+
+        if (thisRequest !== requestNumber) {
+            return;
+        }
+
+        popup.setContent(
+            '<div style="padding:8px;color:#9a4545;">' +
+            '<strong>Data belum dapat dimuat.</strong>' +
+            '<p style="margin-top:7px;">' +
+            'Periksa koneksi GeoServer, layanan WMS, ' +
+            'dan konfigurasi reverse proxy Apache.' +
+            '</p></div>'
+        );
+
+        attributeInfo.textContent =
+            'Gagal mengambil atribut. Pastikan GeoServer ' +
+            'dan reverse proxy Apache berjalan dengan baik.';
+
+    }
+
+});
+
+// ======================================================
+// 15. PENYESUAIAN UKURAN PETA
+// ======================================================
+
+window.addEventListener('resize', function() {
+    map.invalidateSize();
+});
+
+syncCheckboxes();
+
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="auth.js"></script>
+
+</body>
+</html>

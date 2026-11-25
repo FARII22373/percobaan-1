@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Masuk | SIP Kawasan Perkotaan Salaman</title>
+
+    <!-- GOOGLE FONTS -->
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        /* ============================================
+           PENGATURAN DASAR
+        ============================================ */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: 100dvh;
+
+            font-family:
+                'Plus Jakarta Sans',
+                'Segoe UI',
+                sans-serif;
+
+            background: linear-gradient(
+                145deg,
+                #f7fbff 0%,
+                #eaf3fc 48%,
+                #dceaf8 100%
+            );
+
+            color: #102a4c;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 35px 18px;
+
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           MOTIF BATIK MEGA MENDUNG
+        ============================================ */
+
+        body::before {
+            content: "";
+
+            position: fixed;
+            inset: 0;
+
+            pointer-events: none;
+            z-index: 0;
+
+            opacity: 0.10;
+
+            background-repeat: repeat;
+            background-size: 300px 150px;
+
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='150' viewBox='0 0 300 150'%3E%3Cg fill='none' stroke='%23336699' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 108 C 12 74, 52 62, 75 84 C 92 44, 150 38, 174 74 C 202 52, 248 64, 260 98 C 282 98, 294 120, 276 132 L 28 132 C 12 132, 6 120, 12 108 Z'/%3E%3Cpath d='M30 118 C 30 92, 58 82, 78 100 C 95 66, 144 58, 168 88 C 194 70, 232 80, 244 108 C 260 108, 270 120, 256 124 L 40 124 C 30 124, 26 120, 30 118 Z'/%3E%3Cpath d='M48 116 C 52 100, 72 95, 86 108 C 100 84, 136 78, 158 100 C 180 86, 214 94, 225 114'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* ============================================
+           WRAPPER
+        ============================================ */
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 440px;
+
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================
+           IDENTITAS WEBSITE
+        ============================================ */
+
+        .brand-area {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .brand-logo {
+            width: 58px;
+            height: 58px;
+
+            margin: 0 auto 15px;
+
+            background: linear-gradient(
+                135deg,
+                #102a4c,
+                #2a6697
+            );
+
+            color: #ffffff;
+
+            border-radius: 17px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 1.5rem;
+            font-weight: 800;
+
+            box-shadow:
+                0 10px 25px rgba(16, 42, 76, 0.18);
+        }
+
+        .brand-area h1 {
+            font-size: 1.08rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+
+            color: #183d62;
+            margin-bottom: 5px;
+        }
+
+        .brand-area p {
+            font-size: 0.78rem;
+            color: #66819b;
+        }
+
+        /* ============================================
+           SELAMAT DATANG
+        ============================================ */
+
+        .welcome {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            font-size: 1.9rem;
+            font-weight: 800;
+
+            letter-spacing: -0.025em;
+
+            color: #102a4c;
+            margin-bottom: 11px;
+        }
+
+        .welcome p {
+            font-size: 0.87rem;
+            line-height: 1.75;
+
+            color: #54718e;
+        }
+
+        /* ============================================
+           KARTU LOGIN GLASSMORPHISM
+        ============================================ */
+
+        .login-card {
+            background: rgba(
+                255, 255, 255, 0.82
+            );
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+
+            border: 1px solid rgba(
+                255, 255, 255, 0.95
+            );
+
+            border-radius: 23px;
+
+            padding: 34px 30px;
+
+            box-shadow:
+                0 18px 45px rgba(25, 69, 110, 0.11);
+        }
+
+        .card-heading {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .card-heading h3 {
+            font-size: 1.18rem;
+            font-weight: 800;
+            color: #183b5a;
+
+            margin-bottom: 8px;
+        }
+
+        .card-heading p {
+            font-size: 0.8rem;
+            color: #718ba2;
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           FORM INPUT
+        ============================================ */
+
+        .form-group {
+            margin-bottom: 19px;
+        }
+
+        .form-group label {
+            display: block;
+
+            font-size: 0.82rem;
+            font-weight: 700;
+
+            color: #315574;
+
+            margin-bottom: 9px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+
+            padding: 14px 15px;
+
+            background: #f6faff;
+
+            border: 1px solid #d2e2f0;
+            border-radius: 12px;
+
+            color: #183b5a;
+
+            font-family: inherit;
+            font-size: 0.87rem;
+
+            outline: none;
+
+            transition: all 0.25s ease;
+        }
+
+        .form-input::placeholder {
+            color: #98aec1;
+        }
+
+        .form-input:focus {
+            border-color: #4e91cc;
+
+            background: #ffffff;
+
+            box-shadow:
+                0 0 0 3px rgba(78, 145, 204, 0.10);
+        }
+
+        .password-input {
+            padding-right: 75px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            border: none;
+            background: transparent;
+
+            color: #4d779b;
+
+            font-family: inherit;
+            font-size: 0.73rem;
+            font-weight: 700;
+
+            padding: 8px;
+
+            cursor: pointer;
+        }
+
+        .toggle-password:hover {
+            color: #102a4c;
+        }
+
+        .input-help {
+            font-size: 0.72rem;
+            color: #7c96ab;
+
+            margin-top: 7px;
+            line-height: 1.5;
+        }
+
+        /* ============================================
+           TOMBOL MASUK / DAFTAR
+        ============================================ */
+
+        .submit-button {
+            width: 100%;
+
+            padding: 15px;
+
+            border: none;
+            border-radius: 999px;
+
+            background: linear-gradient(
+                135deg,
+                #102a4c 0%,
+                #245789 100%
+            );
+
+            color: #ffffff;
+
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 10px 23px rgba(16, 42, 76, 0.18);
+
+            transition: all 0.25s ease;
+
+            margin-top: 7px;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 14px 28px rgba(16, 42, 76, 0.25);
+        }
+
+        /* ============================================
+           PESAN ERROR DAN SUKSES
+        ============================================ */
+
+        .alert {
+            padding: 12px 14px;
+
+            border-radius: 11px;
+
+            font-size: 0.78rem;
+            line-height: 1.6;
+
+            margin-bottom: 20px;
+        }
+
+        .alert-error {
+            background: #fff1f1;
+            color: #a13f3f;
+
+            border: 1px solid #f1cdcd;
+        }
+
+        .alert-success {
+            background: #eef8f1;
+            color: #276c43;
+
+            border: 1px solid #c9e7d2;
+        }
+
+        /* ============================================
+           TAUTAN DAFTAR / LOGIN
+        ============================================ */
+
+        .switch-mode {
+            text-align: center;
+
+            margin-top: 23px;
+
+            font-size: 0.8rem;
+            color: #6c879e;
+
+            line-height: 1.8;
+        }
+
+        .switch-mode a {
+            color: #215f96;
+
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .switch-mode a:hover {
+            text-decoration: underline;
+        }
+
+        /* ============================================
+           FOOTER
+        ============================================ */
+
+        .footer {
+            text-align: center;
+
+            margin-top: 25px;
+
+            font-size: 0.72rem;
+            color: #6f8aa3;
+
+            line-height: 1.7;
+        }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+
+        @media (max-width: 480px) {
+
+            .login-card {
+                padding: 27px 21px;
+                border-radius: 19px;
+            }
+
+            .welcome h2 {
+                font-size: 1.55rem;
+            }
+
+            .brand-area {
+                margin-bottom: 23px;
+            }
+
+            .welcome {
+                margin-bottom: 20px;
+            }
+
+        }
+
+    
+        [hidden] { display: none !important; }
+</style>
+
+</head>
+
+<body data-login-page="true">
+
+<div class="login-wrapper">
+
+    <!-- =====================================
+         IDENTITAS SIP
+    ====================================== -->
+
+    <div class="brand-area">
+
+        <div class="brand-logo">
+            S
+        </div>
+
+        <h1>SIP SALAMAN</h1>
+
+        <p>
+            Sistem Informasi Pertanahan
+        </p>
+
+    </div>
+
+    <!-- =====================================
+         SELAMAT DATANG
+    ====================================== -->
+
+    <div class="welcome">
+
+        <h2>
+            Selamat Datang
+        </h2>
+
+        <p>
+            Portal Informasi Pertanahan Kawasan
+            Perkotaan Salaman. Akses informasi
+            dan peta pertanahan dalam satu sistem.
+        </p>
+
+    </div>
+
+    <!-- =====================================
+         KARTU LOGIN / REGISTRASI
+    ====================================== -->
+
+
+    <div class="login-card">
+        <div class="card-heading">
+            <h3 id="formTitle">Masuk ke Akun</h3>
+            <p id="formDescription">Masukkan email dan kata sandi untuk melanjutkan ke SIP.</p>
+        </div>
+
+        <div id="authMessage" class="alert" role="status" aria-live="polite" hidden></div>
+
+        <form id="authForm" autocomplete="on">
+            <div class="form-group" id="usernameGroup" hidden>
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-input"
+                       placeholder="Buat username" minlength="4" maxlength="30"
+                       autocomplete="nickname">
+                <p class="input-help">Gunakan 4–30 karakter berupa huruf, angka, atau underscore.</p>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-input"
+                       placeholder="nama@email.com" autocomplete="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Kata Sandi</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" name="password"
+                           class="form-input password-input"
+                           placeholder="Masukkan kata sandi"
+                           autocomplete="current-password" minlength="8" required>
+                    <button type="button" class="toggle-password"
+                            onclick="togglePassword('password', this)">Lihat</button>
+                </div>
+                <p class="input-help" id="passwordHelp" hidden>Kata sandi minimal 8 karakter.</p>
+            </div>
+
+            <div class="form-group" id="confirmGroup" hidden>
+                <label for="confirm_password">Konfirmasi Kata Sandi</label>
+                <div class="input-wrapper">
+                    <input type="password" id="confirm_password" name="confirm_password"
+                           class="form-input password-input"
+                           placeholder="Ulangi kata sandi"
+                           autocomplete="new-password" minlength="8">
+                    <button type="button" class="toggle-password"
+                            onclick="togglePassword('confirm_password', this)">Lihat</button>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-button" id="submitButton">Masuk ke Dashboard</button>
+        </form>
+
+        <div class="switch-mode" id="switchMode">
+            Belum mempunyai akun?
+            <a href="login.html?mode=register" id="modeLink">Daftar Sekarang</a>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+
+        Kelompok 4 — Sistem Informasi Pertanahan
+
+        <p>
+            Kawasan Perkotaan Salaman,
+            Kabupaten Magelang
+        </p>
+
+    </div>
+
+</div>
+
+<!-- ==========================================
+     JAVASCRIPT LIHAT / SEMBUNYIKAN PASSWORD
+=========================================== -->
+
+<script>
+
+function togglePassword(inputId, button) {
+
+    const input = document.getElementById(inputId);
+
+    if (!input) {
+        return;
+    }
+
+    if (input.type === 'password') {
+
+        input.type = 'text';
+        button.textContent = 'Tutup';
+
+    } else {
+
+        input.type = 'password';
+        button.textContent = 'Lihat';
+
+    }
+
+}
+
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="auth.js"></script>
+
+</body>
+</html>
